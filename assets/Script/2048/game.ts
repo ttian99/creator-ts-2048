@@ -1,25 +1,27 @@
 import lodash from '../utils/tools/Lodash';
+import gameUtils from './gameUtils';
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class Xixi extends cc.Component {
-  @property(cc.Label)
-  label: cc.Label = null;
-  @property
-  text: string = 'hello';
-
+export default class Game extends cc.Component {
+  @property(cc.Node) panel = null;
+  @property(cc.Prefab) CorePrefab = null;
+  core: cc.Node = null;
   // onLoad 回调会在组件首次激活时触发，比如所在的场景被载入，或者所在节点被激活的情况下
   onLoad() {
 
   }
   // start 回调函数会在组件第一次激活前，也就是第一次执行 update 之前触发
   start() {
-    this.label.string = this.text;
-    const aa = lodash.map([1, 2, 3, 4], (value) => {
-      return value === 3;
-    });
-    console.log(aa);
+    this.core = cc.instantiate(this.CorePrefab);
+
+    if (gameUtils.init()) {
+      this.updateUI();
+    };
+  }
+  updateUI() {
+    // this.
   }
   // update 每一帧渲染前更新物体的行为，状态和方位
   update() {
