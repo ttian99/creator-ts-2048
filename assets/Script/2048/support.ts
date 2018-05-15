@@ -11,6 +11,16 @@
 //     return cellSpace + j * (cellSpace + cellSideLength);
 // }
 
+const cellSpace = 125;
+
+function getPosX(i, j) {
+    return (j - 2) * (cellSpace + 20) + (cellSpace / 2 + 10);;
+}
+
+function getPosY(i, j) {
+    return -(i - 1) * (cellSpace + 20) + (cellSpace / 2 + 10);
+}
+
 // 获取方块背景颜色
 function getNumberBackgroundColor(number: number) {
     switch (number) {
@@ -22,27 +32,26 @@ function getNumberBackgroundColor(number: number) {
         case 64: return "#f65e3b";
         case 128: return "#edcf72";
         case 256: return "#edcc61";
-        case 512: return "#9c0";
+        case 512: return "#99cc00";
         case 1024: return "#33b5e5";
-        case 2048: return "#09c";
-        case 4096: return "#a6c";
-        case 8192: return "#93c";
-        default: return "black";
+        case 2048: return "#0099cc";
+        case 4096: return "#aa66cc";
+        case 8192: return "#9933cc";
+        default: return "#000000";
     }
-    // return "black";
 }
 // 获取方块字体颜色
 function getNumberColor(number: number) {
     if (number <= 4) {
         return '#776e65';
     }
-    return 'white';
+    return 'ffffff';
 }
 
 // 检测是否有空位
 function nospace(board: Array<Array<Object>>) {
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < 4; j++) {
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
             if (board[i][j] == 0) {
                 return false;
             }
@@ -56,8 +65,8 @@ function nospace(board: Array<Array<Object>>) {
 // 1.左边是否没有数字
 // 2.左边数字是否和自己相等
 function canMoveLeft(board) {
-    for (var i = 0; i < 4; i++) {
-        for (var j = 1; j < 4; j++) {
+    for (let i = 0; i < 4; i++) {
+        for (let j = 1; j < 4; j++) {
             if (board[i][j] != 0) {
                 if (board[i][j - 1] == 0 || board[i][j - 1] == board[i][j]) {
                     return true;
@@ -72,8 +81,8 @@ function canMoveLeft(board) {
 // 1.右边是否没有数字
 // 2.右边数字是否和自己相等
 function canMoveRight(board) {
-    for (var i = 0; i < 4; i++) {
-        for (var j = 2; j >= 0; j--) {
+    for (let i = 0; i < 4; i++) {
+        for (let j = 2; j >= 0; j--) {
             if (board[i][j] != 0) {
                 if (board[i][j + 1] == 0 || board[i][j + 1] == board[i][j]) {
                     return true;
@@ -88,8 +97,8 @@ function canMoveRight(board) {
 // 1.上边是否没有数字
 // 2.上边数字是否和自己相等
 function canMoveUp(board) {
-    for (var j = 0; j < 4; j++) {
-        for (var i = 1; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+        for (let i = 1; i < 4; i++) {
             if (board[i][j] != 0) {
                 if (board[i - 1][j] == 0 || board[i - 1][j] == board[i][j]) {
                     return true;
@@ -104,8 +113,8 @@ function canMoveUp(board) {
 // 1.下边是否没有数字
 // 2.下边数字是否和自己相等
 function canMoveDown(board) {
-    for (var j = 0; j < 4; j++) {
-        for (var i = 2; i >= 0; i--) {
+    for (let j = 0; j < 4; j++) {
+        for (let i = 2; i >= 0; i--) {
             if (board[i][j] != 0) {
                 if (board[i + 1][j] == 0 || board[i + 1][j] == board[i][j]) {
                     return true;
@@ -121,7 +130,7 @@ function canMoveDown(board) {
  * 第row行，col1列到col2列之间
  */
 function noBlockHorizontal(row, col1, col2, board) {
-    for (var i = col1 + 1; i < col2; i++) {
+    for (let i = col1 + 1; i < col2; i++) {
         if (board[row][i] != 0) {
             return false;
         }
@@ -134,7 +143,7 @@ function noBlockHorizontal(row, col1, col2, board) {
  * 第col列，row1行到row2行之间
  */
 function noBlockVertical(col, row1, row2, board) {
-    for (var i = row1 + 1; i < row2; i++) {
+    for (let i = row1 + 1; i < row2; i++) {
         if (board[i][col] != 0) {
             return false;
         }
@@ -153,4 +162,4 @@ function nomove(board) {
     return true;
 }
 
-export default { getNumberBackgroundColor, getNumberColor, nospace, canMoveLeft, canMoveRight, canMoveUp, canMoveDown, noBlockHorizontal, noBlockVertical, nomove }
+export default { getNumberBackgroundColor, getNumberColor, nospace, canMoveLeft, canMoveRight, canMoveUp, canMoveDown, noBlockHorizontal, noBlockVertical, nomove, getPosX, getPosY }

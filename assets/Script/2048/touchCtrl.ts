@@ -1,20 +1,15 @@
 /**
  * 监听滑动和事件监听
  */
+
+ import cfg from './cfg';
+
 const {ccclass, property} = cc._decorator;
-
-// 方向
-const DIRECTOR = cc.Enum({
-    UP: 0,
-    DOWN: 1,
-    LEFT: 2,
-    RIGHT: 3
-});
-
 @ccclass
 export default class TouchCtrl extends cc.Component {
     @property(cc.Vec2) startPos = null; // 点击初始位置
     @property(Number) defaultLen = 50; // 长度
+    
     start () {
 
     }
@@ -64,16 +59,16 @@ export default class TouchCtrl extends cc.Component {
     onKeyUp(event) {
         switch (event.keyCode) {
             case cc.KEY.w:
-            case cc.KEY.up: this.goto(DIRECTOR.UP);
+            case cc.KEY.up: this.goto(cfg.DIRECTOR.UP);
                 break;
             case cc.KEY.s:
-            case cc.KEY.down: this.goto(DIRECTOR.DOWN);
+            case cc.KEY.down: this.goto(cfg.DIRECTOR.DOWN);
                 break;
             case cc.KEY.a:
-            case cc.KEY.left: this.goto(DIRECTOR.LEFT);
+            case cc.KEY.left: this.goto(cfg.DIRECTOR.LEFT);
                 break;
             case cc.KEY.d:
-            case cc.KEY.right: this.goto(DIRECTOR.RIGHT);
+            case cc.KEY.right: this.goto(cfg.DIRECTOR.RIGHT);
                 break;
             default:
                 break;
@@ -86,20 +81,20 @@ export default class TouchCtrl extends cc.Component {
         // 判断滑动方向
         if (Math.abs(deltaX) > Math.abs(deltaY)) { // 左右方向
             if (deltaX > 0) { // 右
-                this.goto(DIRECTOR.RIGHT);
+                this.goto(cfg.DIRECTOR.RIGHT);
             } else { // 左
-                this.goto(DIRECTOR.LEFT);
+                this.goto(cfg.DIRECTOR.LEFT);
             }
         } else { // 上下方向
             if (deltaY > 0) { // 上
-                this.goto(DIRECTOR.UP);
+                this.goto(cfg.DIRECTOR.UP);
             } else { // 下
-                this.goto(DIRECTOR.DOWN);
+                this.goto(cfg.DIRECTOR.DOWN);
             }
         }
     }
     // 执行对应方向动作
     goto(director) {
-        cc.info(DIRECTOR[director]);
+        cc.info(cfg.DIRECTOR[director]);
     }
 }

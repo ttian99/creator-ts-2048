@@ -29,14 +29,21 @@ import support from './support';
 
 // 生成数字动画
 function showNumberWithAnimation(node, i, j, randNumber) {
-    node.color = support.getNumberBackgroundColor(randNumber);
-    node.getChildByName('label').color = support.getNumberColor(randNumber);
-    node.runAction(cc.fadeIn(3));
+    node.getComponent('core').setNumber(randNumber);
+    node.stopAllActions();
+    node.runAction(cc.sequence(
+        cc.callFunc(() => node.opacity = 0),
+        cc.fadeIn(0.5),
+    ));
 }
 
 // 移动动画
 function showMoveAnimation(node, fromx, fromy, tox, toy) {
-    node.runAction
+    
+    node.stopAllActions();
+    node.runAction(cc.sequence(
+        cc.callFunc(() => )
+    ))
 }
 
 // 更新分数
