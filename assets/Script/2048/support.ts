@@ -13,6 +13,13 @@
 
 const cellSpace = 125;
 
+function getPos(i, j) {
+    return {
+        x: getPosX(i, j),
+        y: getPosY(i, j),
+    }
+}
+
 function getPosX(i, j) {
     return (j - 2) * (cellSpace + 20) + (cellSpace / 2 + 10);;
 }
@@ -162,4 +169,4 @@ function nomove(board) {
     return true;
 }
 
-export default { getNumberBackgroundColor, getNumberColor, nospace, canMoveLeft, canMoveRight, canMoveUp, canMoveDown, noBlockHorizontal, noBlockVertical, nomove, getPosX, getPosY }
+export default { getNumberBackgroundColor, getNumberColor, nospace, canMoveLeft, canMoveRight, canMoveUp, canMoveDown, noBlockHorizontal, noBlockVertical, nomove, getPosX, getPosY, getPos }

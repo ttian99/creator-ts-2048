@@ -50,8 +50,11 @@ export default class Game extends cc.Component {
 
   // 更新面板
   updatePanel() {
+    // this.panel.destroyAllChildren();
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
+        // const core = cc.instantiate(this.coreBake);
+        // this.panel.addChild(core);
         const core = this.coreArr[i][j];
         const number = gameCtrl.getNumber(i, j);
         core.getComponent('core').setNumber(number);
@@ -79,9 +82,9 @@ export default class Game extends cc.Component {
   }
 
   moveLeft() {
-    cc.warn('left');
+    cc.warn('======================left');
     if (!gameCtrl.canMoveLeft) return false;
-    
+
     for (var i = 0; i < 4; i++) {
       for (var j = 1; j < 4; j++) {
         const node = this.coreArr[i][j];
@@ -91,21 +94,27 @@ export default class Game extends cc.Component {
           for (var k = 0; k < j; k++) {
             if (board[i][k] == 0 && gameCtrl.noBlockHorizontal(i, k, j, board)) {
               // move (i,j)->(i,k)
-              animationCtrl.showMoveAnimation(node, i, j, i, k);
-              board[i][k] = board[i][j];
-              board[i][j] = 0;
+              animationCtrl.showMoveAnimation(node, i, j, i, k, () => {
+                board[i][k] = board[i][j];
+                board[i][j] = 0;
+                this.coreArr[i][j].getComponent('core').setNumber(0);
+                this.coreArr[i][k].getComponent('core').setNumber(board[i][k]);
+              });
               continue;
             } else if (board[i][k] == board[i][j] && gameCtrl.noBlockHorizontal(i, k, j, board) && !conflictedArr[i][k]) {
               // move
-              animationCtrl.showMoveAnimation(node, i, j, i, k);
-              // add
-              board[i][k] += board[i][j];
-              board[i][j] = 0;
-              // add Score
-              // score += board[i][k];
-              // updateScore(score);
-              // reset
-              conflictedArr[i][k] = true;
+              animationCtrl.showMoveAnimation(node, i, j, i, k, () => {
+                // add
+                board[i][k] += board[i][j];
+                board[i][j] = 0;
+                this.coreArr[i][j].getComponent('core').setNumber(0);
+                this.coreArr[i][k].getComponent('core').setNumber(board[i][k]);
+                // add Score
+                // score += board[i][k];
+                // updateScore(score);
+                // reset
+                conflictedArr[i][k] = true;
+              });
               continue;
             }
           }

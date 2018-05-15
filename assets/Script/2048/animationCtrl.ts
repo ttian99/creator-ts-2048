@@ -26,6 +26,7 @@
 // }
 
 import support from './support';
+import gameCtrl from './gameCtrl';
 
 // 生成数字动画
 function showNumberWithAnimation(node, i, j, randNumber) {
@@ -38,12 +39,20 @@ function showNumberWithAnimation(node, i, j, randNumber) {
 }
 
 // 移动动画
-function showMoveAnimation(node, fromx, fromy, tox, toy) {
-    
+function showMoveAnimation(node, fromx, fromy, tox, toy, cb) {
+    const startPos = support.getPos(fromx, fromy);
+    const endPos = support.getPos(tox, toy);
+    cc.info(`(${fromx}, ${fromy}) => (${tox}, ${toy})`);
     node.stopAllActions();
     node.runAction(cc.sequence(
-        cc.callFunc(() => )
-    ))
+        cc.moveTo(3, endPos.x, endPos.y),
+        cc.callFunc(() => {
+            // node.setPosition(startPos);
+            // node.getComponent
+            cc.info('==== over =====');
+            cb && cb();
+        })
+    ));
 }
 
 // 更新分数

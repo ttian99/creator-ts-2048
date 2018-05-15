@@ -3,6 +3,7 @@
  */
 
  import cfg from './cfg';
+ import gameCtrl from './gameCtrl';
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -95,6 +96,7 @@ export default class TouchCtrl extends cc.Component {
     }
     // 执行对应方向动作
     goto(director) {
-        cc.info(cfg.DIRECTOR[director]);
+        cc.info("cfg.DIRECTOR[director] = " + cfg.DIRECTOR[director]);
+        gameCtrl.goto(director);
     }
 }
