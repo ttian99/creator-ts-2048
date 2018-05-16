@@ -26,7 +26,7 @@ class GameCtrl {
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
-            [0, 0, 0, 0]
+            [2, 0, 2, 2]
         ];
         this.conflictedArr = [
             [false, false, false, false],
@@ -110,122 +110,38 @@ class GameCtrl {
     }
 
     // 滑动后的动作
-    goto(director) {
-        if (director === cfg.DIRECTOR.LEFT) {
-            this.layer.moveLeft();
+    async goto(director) {
+        if (director === cfg.DIRECTOR.LEFT) { 
+            const isMoveLeft = await this.layer.moveLeft();
+            if (isMoveLeft) {
+                cc.warn(`isMoveLeft = ${isMoveLeft}`);
+                this.nextRound();
+            };
         } else if (director === cfg.DIRECTOR.RIGHT) {
-            this.layer.moveRight();
+            const isMoveRight = await this.layer.moveRight();
+            if (isMoveRight) {
+                this.nextRound();
+            };
         } else if (director === cfg.DIRECTOR.UP) {
-            this.layer.moveUp();
+            const isMoveUp = await this.layer.moveUp();
+            if (isMoveUp) {
+                this.nextRound();
+            };
         } else if (director === cfg.DIRECTOR.DOWN) {
-            this.layer.moveDown();
+            const isMoveDown = await this.layer.moveDown();
+            if (isMoveDown) {
+                this.nextRound();
+            };
         }
     }
 
-    moveOneLeft(i, j, node) {
-        cc.warn('left');
-        const board = this.board;
-        if (board[i][j] != 0) {
-            for (var k = 0; k < j; k++) {
-                if (board[i][k] == 0 && support.noBlockHorizontal(i, k, j, board)) {
-                    // move (i,j)->(i,k)
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    board[i][k] = board[i][j];
-                    board[i][j] = 0;
-                    continue;
-                } else if (board[i][k] == board[i][j] && support.noBlockHorizontal(i, k, j, board) && !this.conflictedArr[i][k]) {
-                    // move
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    // add
-                    board[i][k] += board[i][j];
-                    board[i][j] = 0;
-                    // add Score
-                    // score += board[i][k];
-                    // updateScore(score);
-                    // reset
-                    this.conflictedArr[i][k] = true;
-                    continue;
-                }
-            }
-        }
-    }
-    moveOneRight(i, j, node) {
-        const board = this.board;
-        if (board[i][j] != 0) {
-            for (var k = 0; k < j; k++) {
-                if (board[i][k] == 0 && support.noBlockHorizontal(i, k, j, board)) {
-                    // move (i,j)->(i,k)
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    board[i][k] = board[i][j];
-                    board[i][j] = 0;
-                    continue;
-                } else if (board[i][k] == board[i][j] && support.noBlockHorizontal(i, k, j, board) && !this.conflictedArr[i][k]) {
-                    // move
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    // add
-                    board[i][k] += board[i][j];
-                    board[i][j] = 0;
-                    // add Score
-                    // score += board[i][k];
-                    // updateScore(score);
-                    // reset
-                    this.conflictedArr[i][k] = true;
-                    continue;
-                }
-            }
-        }
-    }
-    moveOneUp(i, j, node) {
-        const board = this.board;
-        if (board[i][j] != 0) {
-            for (var k = 0; k < j; k++) {
-                if (board[i][k] == 0 && support.noBlockHorizontal(i, k, j, board)) {
-                    // move (i,j)->(i,k)
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    board[i][k] = board[i][j];
-                    board[i][j] = 0;
-                    continue;
-                } else if (board[i][k] == board[i][j] && support.noBlockHorizontal(i, k, j, board) && !this.conflictedArr[i][k]) {
-                    // move
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    // add
-                    board[i][k] += board[i][j];
-                    board[i][j] = 0;
-                    // add Score
-                    // score += board[i][k];
-                    // updateScore(score);
-                    // reset
-                    this.conflictedArr[i][k] = true;
-                    continue;
-                }
-            }
-        }
-    }
-    moveOneDown(i, j, node) {
-        const board = this.board;
-        if (board[i][j] != 0) {
-            for (var k = 0; k < j; k++) {
-                if (board[i][k] == 0 && support.noBlockHorizontal(i, k, j, board)) {
-                    // move (i,j)->(i,k)
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    board[i][k] = board[i][j];
-                    board[i][j] = 0;
-                    continue;
-                } else if (board[i][k] == board[i][j] && support.noBlockHorizontal(i, k, j, board) && !this.conflictedArr[i][k]) {
-                    // move
-                    animationCtrl.showMoveAnimation(node, i, j, i, k);
-                    // add
-                    board[i][k] += board[i][j];
-                    board[i][j] = 0;
-                    // add Score
-                    // score += board[i][k];
-                    // updateScore(score);
-                    // reset
-                    this.conflictedArr[i][k] = true;
-                    continue;
-                }
-            }
-        }
+    // 进入下一轮
+    nextRound() {
+        cc.info('==> nextRound');
+        setTimeout(async () => {
+            await this.layer.generateOneNumber();
+            this.isGameOver && this.layer.gameOver();
+        }, 400)
     }
 
     getPosX(i, j) {

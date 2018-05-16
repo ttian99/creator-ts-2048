@@ -137,12 +137,16 @@ function canMoveDown(board) {
  * 第row行，col1列到col2列之间
  */
 function noBlockHorizontal(row, col1, col2, board) {
+    // cc.error(`col1 + 1 = ${col1 + 1}, col2 = ${col2}`);
+    if (col1 == col2 - 1) return true;
     for (let i = col1 + 1; i < col2; i++) {
+        // cc.error(`i = ${i}, col2 = ${col2}`);
         if (board[row][i] != 0) {
             return false;
         }
+
+        if (i == col2 - 1) return true;
     }
-    return true;
 }
 
 /**
@@ -150,12 +154,14 @@ function noBlockHorizontal(row, col1, col2, board) {
  * 第col列，row1行到row2行之间
  */
 function noBlockVertical(col, row1, row2, board) {
+    if (row1 == row2 - 1) return true;
     for (let i = row1 + 1; i < row2; i++) {
         if (board[i][col] != 0) {
             return false;
         }
+
+        if (i == row2 - 1) return true;
     }
-    return true;
 }
 
 // 判断是否可以移动
