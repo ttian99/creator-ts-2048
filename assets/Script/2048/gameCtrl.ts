@@ -25,8 +25,8 @@ class GameCtrl {
         this.board = [
             [0, 0, 0, 0],
             [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [2, 0, 2, 2]
+            [2, 0, 0, 2],
+            [2, 0, 0, 2]
         ];
         this.conflictedArr = [
             [false, false, false, false],

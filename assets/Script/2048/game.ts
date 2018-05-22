@@ -10,6 +10,7 @@ export default class Game extends cc.Component {
   @property(cc.Prefab) CorePrefab = null;
   coreBake: cc.Node = null;
   coreArr: Array<Array<cc.Node>> = [];
+  actArr: Array<Array<cc.Node>> = [];
 
   // onLoad 回调会在组件首次激活时触发，比如所在的场景被载入，或者所在节点被激活的情况下
   onLoad() {
@@ -33,14 +34,26 @@ export default class Game extends cc.Component {
     const arr = gameCtrl.initData(this);
     for (let i = 0; i < 4; i++) {
       this.coreArr[i] = [];
+      this.actArr[i] = [];
       for (let j = 0; j < 4; j++) {
+        const posX = gameCtrl.getPosX(i, j);
+        const posY = gameCtrl.getPosY(i, j);
         const core = cc.instantiate(this.coreBake);
-        core.x = gameCtrl.getPosX(i, j);
-        core.y = gameCtrl.getPosY(i, j);
+        core.x = posX;
+        core.y = posY;
         // cc.info('core.x = ' + core.x + ' , core.y = ' + core.y);
         core.getComponent('core').setNumber(arr[i][j]);
         this.panel.addChild(core);
         this.coreArr[i][j] = core;
+        // 动画需要的节点
+        const actNode = cc.instantiate(this.coreBake);
+        actNode.x = posX;
+        actNode.y = posY;
+        actNode.getComponent('core').setNumber(arr[i][j]);
+        // actNode.active = true;
+        this.panel.addChild(actNode, 30);
+        this.actArr[i][j] = actNode;
+
         gameCtrl.setConflited(i, j, false);
         // for循环结束
         if (i === 3 && j === 3) return true;
@@ -68,7 +81,11 @@ export default class Game extends cc.Component {
     const number = gameCtrl.getNumber(i, j);
     core.getComponent('core').setNumber(number);
   }
-
+  updateActCore(i, j) {
+    const actCore = this.actArr[i][j];
+    const number = gameCtrl.getNumber(i, j);
+    actCore.getComponent('core').setNumber(number);
+  }
   // 随机生成一个数字
   async generateOneNumber() {
     // 没有空位就返回
@@ -87,11 +104,23 @@ export default class Game extends cc.Component {
 
   async moveLeft() {
     cc.warn('==> prepare moveleft');
+    const self = this;
     if (!gameCtrl.canMoveLeft) return false;
+
+    function moveOver() {
+      cc.error('==> moveOver');
+      this.updatePanel();
+      return true;
+    }
 
     for (var i = 0; i < 4; i++) {
       for (var j = 1; j < 4; j++) {
-        const node = this.coreArr[i][j];
+        // const node = this.coreArr[i][j];
+        // const nodeClone = cc.instantiate(node);
+        // nodeClone.color = cc.color(255, 100, 100);
+        // // nodeClone.setPosition(node.getPosition());
+        // nodeClone.parent = node.parent;
+        const actNode = this.actArr[i][j];
         const board = gameCtrl.getBoard();
         const conflictedArr = gameCtrl.conflictedArr;
         if (board[i][j] !== 0) {
@@ -102,32 +131,54 @@ export default class Game extends cc.Component {
           for (var k = 0; k < j; k++) {
             cc.error(`k=${k}, j-1=${j - 1}`);
 
-            if (k == j - 1) {
+            if (k == j - 1 && i == 3 && j == 3) {
               cc.error('== do over ');
+              cc.log(allArr.length);
               var p = Promise.all(allArr);
-              p.then(function (result) {
+              p.then((result) => {
                 cc.log('result');
                 cc.log(result);
-                this.updatePanel();
-                return true;
+                // this.updatePanel();
+                // return true;
+                moveOver();
               });
             }
 
             const noblock = gameCtrl.noBlockHorizontal(i, k, j, board);
             if (board[i][k] == 0 && noblock) {
+              cc.log(`move to: i=${i},j=${j},k=${k}`);
               board[i][k] = board[i][j];
               board[i][j] = 0;
               // move (i,j)->(i,k)
-              // var act = animationCtrl.showMoveAnimation(node, i, j, i, k);
-              // allArr.push(act);
+              actNode.getComponent('core').setNumber(board[i][j]);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => {
+                this.updateCore(tox, toy);
+              });
+              allArr.push(act);
               break;
             } else if (board[i][k] == board[i][j] && noblock && !conflictedArr[i][k]) {
+              cc.log(`move combine: i=${i},j=${j},k=${k}`);
+              actNode.active = true;
+              this.updateActCore(i, j);
+
+              // 测试需要
+              board[i][j] = 0;
+              this.updateCore(i, j);
+              break;
               // add
               board[i][k] += board[i][j];
               board[i][j] = 0;
               // reset
               conflictedArr[i][k] = true;
               // move
+              this.updateCore(i, j);
+              actNode.getComponent('core').setNumber(board[i][j]);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => {
+                this.updateCore(tox, toy);
+              });
+              allArr.push(act);
+
+
               // animationCtrl.showMoveAnimation(node, i, j, i, k, (tox, toy) => {
               //   // this.updateCore(tox, toy);
               // });
@@ -137,6 +188,8 @@ export default class Game extends cc.Component {
               // const act = animationCtrl.showMoveAnimation(node, i, j, i, k);
               // allArr.push(act);
               break;
+            } else {
+              cc.info('no move')
             }
           }
 

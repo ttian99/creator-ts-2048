@@ -18,20 +18,23 @@ function showNumberWithAnimation(node, i, j, randNumber) {
 }
 
 // 移动动画
-async function showMoveAnimation(node, fromx, fromy, tox, toy) {
+function showMoveAnimation(node, fromx, fromy, tox, toy) {
     return new Promise((resolve, reject) => {
         cc.info(`==> act start: (${fromx}, ${fromy}) => (${tox}, ${toy})`);
         const startPos = support.getPos(fromx, fromy);
         const endPos = support.getPos(tox, toy)
         cc.info(`==> act mid: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
+        node.active = true;
         node.stopAllActions();
         var act = cc.sequence(
             cc.moveTo(0.5, cc.p(endPos.x, endPos.y)),
             cc.callFunc(function () {
                 cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
                 node.setPosition(startPos);
-                node.getComponent('core').setNumber(0);
+                // node.getComponent('core').setNumber(0);
                 // cb && cb(tox, toy);
+                // node.destroy();
+                node.active = false;
                 resolve();
             })
         );
@@ -40,8 +43,29 @@ async function showMoveAnimation(node, fromx, fromy, tox, toy) {
 
 }
 
+// 移动动画
+function showMoveAnimation2(node, fromx, fromy, tox, toy, cb) {
+    cc.info(`==> act start: (${fromx}, ${fromy}) => (${tox}, ${toy})`);
+    const startPos = support.getPos(fromx, fromy);
+    const endPos = support.getPos(tox, toy)
+    cc.info(`==> act mid: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
+    node.active = true;
+    node.stopAllActions();
+    var act = cc.sequence(
+        cc.moveTo(0.5, cc.p(endPos.x, endPos.y)),
+        cc.callFunc(function () {
+            cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
+            node.setPosition(startPos);
+            node.active = false;
+            cb && cb();
+        })
+    );
+    node.runAction(act);
+}
+
+
 // 更新分数
 function updateScore(score) {
     // 
 }
-export default { showNumberWithAnimation, showMoveAnimation }
+export default { showNumberWithAnimation, showMoveAnimation, showMoveAnimation2 }
