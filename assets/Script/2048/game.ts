@@ -15,6 +15,7 @@ export default class Game extends cc.Component {
   // onLoad 回调会在组件首次激活时触发，比如所在的场景被载入，或者所在节点被激活的情况下
   onLoad() {
     this.panel = cc.find('panel', this.node);
+    window.game = this;
   }
   // start 回调函数会在组件第一次激活前，也就是第一次执行 update 之前触发
   start() {
@@ -115,11 +116,6 @@ export default class Game extends cc.Component {
 
     for (var i = 0; i < 4; i++) {
       for (var j = 1; j < 4; j++) {
-        // const node = this.coreArr[i][j];
-        // const nodeClone = cc.instantiate(node);
-        // nodeClone.color = cc.color(255, 100, 100);
-        // // nodeClone.setPosition(node.getPosition());
-        // nodeClone.parent = node.parent;
         const actNode = this.actArr[i][j];
         const board = gameCtrl.getBoard();
         const conflictedArr = gameCtrl.conflictedArr;
@@ -150,7 +146,6 @@ export default class Game extends cc.Component {
               board[i][k] = board[i][j];
               board[i][j] = 0;
               // move (i,j)->(i,k)
-              actNode.getComponent('core').setNumber(board[i][j]);
               let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => {
                 this.updateCore(tox, toy);
               });
@@ -160,11 +155,6 @@ export default class Game extends cc.Component {
               cc.log(`move combine: i=${i},j=${j},k=${k}`);
               actNode.active = true;
               this.updateActCore(i, j);
-
-              // 测试需要
-              board[i][j] = 0;
-              this.updateCore(i, j);
-              break;
               // add
               board[i][k] += board[i][j];
               board[i][j] = 0;
@@ -172,21 +162,13 @@ export default class Game extends cc.Component {
               conflictedArr[i][k] = true;
               // move
               this.updateCore(i, j);
-              actNode.getComponent('core').setNumber(board[i][j]);
               let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => {
-                this.updateCore(tox, toy);
+                self.updateCore(tox, toy);
               });
               allArr.push(act);
-
-
-              // animationCtrl.showMoveAnimation(node, i, j, i, k, (tox, toy) => {
-              //   // this.updateCore(tox, toy);
-              // });
               // add Score
               // score += board[i][k];
               // updateScore(score);
-              // const act = animationCtrl.showMoveAnimation(node, i, j, i, k);
-              // allArr.push(act);
               break;
             } else {
               cc.info('no move')
