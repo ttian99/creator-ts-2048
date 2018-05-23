@@ -1,31 +1,23 @@
 import lodash from '../utils/tools/Lodash';
 import support from './support'
-import animationCtrl from './animationCtrl';
 import cfg from './cfg';
 
 class GameCtrl {
     board: Array<Array<number>> = null; // 方块数据
     conflictedArr: Array<Array<boolean>> = null; // 是否合并过
     layer = null;
+    score: number = 0; // 得分
     constructor() {
         this.board = new Array();
     }
 
     initData(gameLayer) {
-        // for (var i = 0; i < 4; i++) {
-        //     this.board[i] = new Array();
-        //     for (var j = 0; j < 4; j++) {
-        //         this.board[i][j] = 0;
-        //         if (i == 3 && j == 3) {
-        //             return true;
-        //         }
-        //     }
-        // }
+        this.score = 0; // 得分
         this.layer = gameLayer;
         this.board = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [2, 0, 0, 2],
+            [0, 0, 0, 8],
+            [2, 0, 2, 0],
+            [0, 0, 0, 2],
             [2, 0, 0, 2]
         ];
         this.conflictedArr = [
@@ -100,7 +92,7 @@ class GameCtrl {
     get canMoveDown() {
         return support.canMoveDown(this.board);
     }
-    
+
     noBlockHorizontal(row, col1, col2, board) {
         return support.noBlockHorizontal(row, col1, col2, board);
     }
@@ -111,37 +103,48 @@ class GameCtrl {
 
     // 滑动后的动作
     async goto(director) {
-        if (director === cfg.DIRECTOR.LEFT) { 
-            const isMoveLeft = await this.layer.moveLeft();
-            if (isMoveLeft) {
-                cc.warn(`isMoveLeft = ${isMoveLeft}`);
+        cc.info(`director = ` + cfg.DIRECTOR[director]);
+        if (director === cfg.DIRECTOR.LEFT) {
+            if (this.canMoveLeft) {
+                await this.layer.moveLeft();
                 this.nextRound();
-            };
+            }
         } else if (director === cfg.DIRECTOR.RIGHT) {
-            const isMoveRight = await this.layer.moveRight();
-            if (isMoveRight) {
+            if (this.canMoveRight) {
+                await this.layer.moveRight();
                 this.nextRound();
-            };
+            }
         } else if (director === cfg.DIRECTOR.UP) {
-            const isMoveUp = await this.layer.moveUp();
-            if (isMoveUp) {
+            if (this.canMoveUp) {
+                await this.layer.moveUp();
                 this.nextRound();
-            };
+            }
         } else if (director === cfg.DIRECTOR.DOWN) {
-            const isMoveDown = await this.layer.moveDown();
-            if (isMoveDown) {
+            if (this.canMoveDown) {
+                await this.layer.moveDown();
                 this.nextRound();
-            };
+            }
         }
     }
 
+    // 重置合并属性
+    resetConflict() {
+        this.conflictedArr = [
+            [false, false, false, false],
+            [false, false, false, false],
+            [false, false, false, false],
+            [false, false, false, false]
+        ];
+    }
+
     // 进入下一轮
-    nextRound() {
+    async nextRound() {
         cc.info('==> nextRound');
+        this.resetConflict();
         setTimeout(async () => {
             await this.layer.generateOneNumber();
             this.isGameOver && this.layer.gameOver();
-        }, 400)
+        }, 200)
     }
 
     getPosX(i, j) {
@@ -149,6 +152,11 @@ class GameCtrl {
     }
     getPosY(i, j) {
         return support.getPosY(i, j);
+    }
+
+    addScore(score) {
+        this.score += score;
+        this.layer.updateScore(this.score);
     }
 }
 

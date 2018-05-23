@@ -8,6 +8,7 @@ const { ccclass, property } = cc._decorator;
 export default class Game extends cc.Component {
   @property(cc.Node) panel = null;
   @property(cc.Prefab) CorePrefab = null;
+  @property(cc.Label) scoreLabel = null;
   coreBake: cc.Node = null;
   coreArr: Array<Array<cc.Node>> = [];
   actArr: Array<Array<cc.Node>> = [];
@@ -37,12 +38,12 @@ export default class Game extends cc.Component {
       this.coreArr[i] = [];
       this.actArr[i] = [];
       for (let j = 0; j < 4; j++) {
+        // 静态core显示
         const posX = gameCtrl.getPosX(i, j);
         const posY = gameCtrl.getPosY(i, j);
         const core = cc.instantiate(this.coreBake);
         core.x = posX;
         core.y = posY;
-        // cc.info('core.x = ' + core.x + ' , core.y = ' + core.y);
         core.getComponent('core').setNumber(arr[i][j]);
         this.panel.addChild(core);
         this.coreArr[i][j] = core;
@@ -50,11 +51,10 @@ export default class Game extends cc.Component {
         const actNode = cc.instantiate(this.coreBake);
         actNode.x = posX;
         actNode.y = posY;
-        actNode.getComponent('core').setNumber(arr[i][j]);
-        // actNode.active = true;
+        actNode.getComponent('core').setNumber(0);
         this.panel.addChild(actNode, 30);
         this.actArr[i][j] = actNode;
-
+        // 设置是否合并过
         gameCtrl.setConflited(i, j, false);
         // for循环结束
         if (i === 3 && j === 3) return true;
@@ -64,7 +64,7 @@ export default class Game extends cc.Component {
 
   // 更新面板
   async updatePanel() {
-    cc.error('== updatePanel ');
+    cc.error('== updatePanel = ' + JSON.stringify(gameCtrl.board, null, 0));
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
         const core = this.coreArr[i][j];
@@ -80,6 +80,7 @@ export default class Game extends cc.Component {
   updateCore(i, j) {
     const core = this.coreArr[i][j];
     const number = gameCtrl.getNumber(i, j);
+    cc.info(`updateCore number = ${number}`);
     core.getComponent('core').setNumber(number);
   }
   updateActCore(i, j) {
@@ -104,56 +105,27 @@ export default class Game extends cc.Component {
   }
 
   async moveLeft() {
-    cc.warn('==> prepare moveleft');
-    const self = this;
-    if (!gameCtrl.canMoveLeft) return false;
-
-    function moveOver() {
-      cc.error('==> moveOver');
-      this.updatePanel();
-      return true;
-    }
-
     for (var i = 0; i < 4; i++) {
       for (var j = 1; j < 4; j++) {
         const actNode = this.actArr[i][j];
         const board = gameCtrl.getBoard();
         const conflictedArr = gameCtrl.conflictedArr;
+        let allArr = [];
+
         if (board[i][j] !== 0) {
-
-
-
-          let allArr = [];
           for (var k = 0; k < j; k++) {
             cc.error(`k=${k}, j-1=${j - 1}`);
-
-            if (k == j - 1 && i == 3 && j == 3) {
-              cc.error('== do over ');
-              cc.log(allArr.length);
-              var p = Promise.all(allArr);
-              p.then((result) => {
-                cc.log('result');
-                cc.log(result);
-                // this.updatePanel();
-                // return true;
-                moveOver();
-              });
-            }
-
             const noblock = gameCtrl.noBlockHorizontal(i, k, j, board);
             if (board[i][k] == 0 && noblock) {
-              cc.log(`move to: i=${i},j=${j},k=${k}`);
+              this.updateActCore(i, j);
               board[i][k] = board[i][j];
               board[i][j] = 0;
               // move (i,j)->(i,k)
-              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => {
-                this.updateCore(tox, toy);
-              });
+              this.updateCore(i, j);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
               allArr.push(act);
               break;
-            } else if (board[i][k] == board[i][j] && noblock && !conflictedArr[i][k]) {
-              cc.log(`move combine: i=${i},j=${j},k=${k}`);
-              actNode.active = true;
+            } else if (board[i][k] !== 0 && board[i][k] == board[i][j] && noblock && !conflictedArr[i][k]) {
               this.updateActCore(i, j);
               // add
               board[i][k] += board[i][j];
@@ -162,118 +134,174 @@ export default class Game extends cc.Component {
               conflictedArr[i][k] = true;
               // move
               this.updateCore(i, j);
-              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => {
-                self.updateCore(tox, toy);
-              });
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
               allArr.push(act);
               // add Score
-              // score += board[i][k];
-              // updateScore(score);
+              gameCtrl.addScore(board[i][k] / 2);
               break;
-            } else {
-              cc.info('no move')
             }
           }
+        }
 
-
+        // 动画结束判断
+        if (i == 3 && j == 3) {
+          cc.info('数据地方');
+          if (allArr.length === 0) return false;
+          await Promise.all(allArr)
+            .then((results) => {
+              cc.info('result');
+              cc.info(results);
+              return true;
+            })
         }
       }
     }
-    // setTimeout(this.updatePanel.bind(this), 1000);
-    // return true;
   }
 
-  moveRight() {
+  async moveRight() {
     cc.warn('==> prepare moveRight');
-    if (!gameCtrl.canMoveRight) return false;
-
     for (var i = 0; i < 4; i++) {
       for (var j = 2; j >= 0; j--) {
-        const node = this.coreArr[i][j];
+        const actNode = this.actArr[i][j];
         const board = gameCtrl.getBoard();
         const conflictedArr = gameCtrl.conflictedArr;
+        const allArr = [];
         if (board[i][j] !== 0) {
           for (var k = 3; k > j; k--) {
             const noblock = gameCtrl.noBlockHorizontal(i, j, k, board);
             if (board[i][k] == 0 && noblock) {
+              this.updateActCore(i, j);
               board[i][k] = board[i][j];
               board[i][j] = 0;
               // move (i,j)->(i,k)
-              animationCtrl.showMoveAnimation(node, i, j, i, k, (tox, toy) => {
-                // this.updateCore(tox, toy);
-                // this.updatePanel();
-              });
+              this.updateCore(i, j);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
+              allArr.push(act);
               break;
-            } else if (board[i][k] == board[i][j] && noblock && !conflictedArr[i][k]) {
+            } else if (board[i][k] !== 0 && board[i][k] == board[i][j] && noblock && !conflictedArr[i][k]) {
+              this.updateActCore(i, j);
               // add
               board[i][k] += board[i][j];
               board[i][j] = 0;
               // reset
               conflictedArr[i][k] = true;
               // move
-              animationCtrl.showMoveAnimation(node, i, j, i, k, (tox, toy) => {
-                // this.updateCore(tox, toy);
-                // this.updatePanel();
-              });
+              this.updateCore(i, j);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
+              allArr.push(act);
               // add Score
-              // score += board[i][k];
-              // updateScore(score);
+              gameCtrl.addScore(board[i][k] / 2);
+              break;
+            }
+          }
+        }
+
+        // 动画结束判断
+        if (i == 3 && j == 3) {
+          cc.info('数据地方');
+          if (allArr.length === 0) return false;
+          await Promise.all(allArr)
+            .then((results) => {
+              cc.info('result');
+              // cc.info(results);
+              this.updatePanel();
+
+              cc.info('result over');
+              return true;
+            })
+        }
+      }
+    }
+  }
+
+  async moveUp() {
+    cc.warn('==> prepare moveUp');
+    for (var j = 0; j < 4; j++) {
+      for (var i = 1; i < 4; i++) {
+        const actNode = this.actArr[i][j];
+        const board = gameCtrl.getBoard();
+        const conflictedArr = gameCtrl.conflictedArr;
+        const allArr = [];
+        if (board[i][j] != 0) {
+          for (var k = 0; k < i; k++) {
+            const noblock = gameCtrl.noBlockVertical(j, k, i, board);
+            if (board[k][j] == 0 && noblock) {
+              this.updateActCore(i, j);
+              board[k][j] = board[i][j];
+              board[i][j] = 0;
+              this.updateCore(i, j);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, k, j, (tox, toy) => this.updateCore(tox, toy));
+              allArr.push(act);
+              break;
+            } else if (board[k][j] == board[i][j] && noblock && !conflictedArr[k][j]) {
+              this.updateActCore(i, j);
+              board[k][j] += board[i][j];
+              board[i][j] = 0;
+              // reset
+              conflictedArr[k][j] = true;
+              this.updateCore(i, j);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, k, j, (tox, toy) => this.updateCore(tox, toy));
+              allArr.push(act);
+              // add Score
+              gameCtrl.addScore(board[k][j] / 2);
+              break;
+            }
+          }
+        }
+        // 动画结束判断
+        if (i == 3 && j == 3) {
+          cc.info('数据地方');
+          if (allArr.length === 0) return false;
+          await Promise.all(allArr)
+            .then((results) => {
+              cc.info('result');
+              cc.info(results);
+              return true;
+            })
+        }
+      }
+    }
+  }
+  async moveDown() {
+    cc.warn('==> prepare moveDown');
+    for (var j = 0; j < 4; j++) {
+      for (var i = 2; i >= 0; i--) {
+        const actNode = this.actArr[i][j];
+        const board = gameCtrl.getBoard();
+        const conflictedArr = gameCtrl.conflictedArr;
+        const allArr = [];
+        if (board[i][j] != 0) {
+          for (var k = 3; k > i; k--) {
+            const noblock = gameCtrl.noBlockVertical(j, i, k, board);
+            if (board[k][j] == 0 && noblock) {
+              this.updateActCore(i, j);
+              board[k][j] = board[i][j];
+              board[i][j] = 0;
+              this.updateCore(i, j);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, k, j, (tox, toy) => this.updateCore(tox, toy));
+              allArr.push(act);
+              break;
+            } else if (board[k][j] == board[i][j] && noblock && !conflictedArr[k][j]) {
+              this.updateActCore(i, j);
+              board[k][j] += board[i][j];
+              board[i][j] = 0;
+              // reset
+              conflictedArr[k][j] = true;
+              this.updateCore(i, j);
+              let act = animationCtrl.showMoveAnimation2(actNode, i, j, k, j, (tox, toy) => this.updateCore(tox, toy));
+              allArr.push(act);
+              // add Score
+              gameCtrl.addScore(board[k][j] / 2);
               break;
             }
           }
         }
       }
     }
-    setTimeout(this.updatePanel.bind(this), 500);
-    return true;
   }
 
-  moveUp() {
-    if (!gameCtrl.canMoveLeft) return false;
-
-    for (var i = 0; i < 4; i++) {
-      for (var j = 1; j < 4; j++) {
-        const node = this.coreArr[i][j];
-        gameCtrl.moveOneRight(i, j, node);
-      }
-    }
-
-    setTimeout(() => this.updatePanel, 101);
-    return true;
-  }
-  moveDown() {
-    if (!gameCtrl.canMoveLeft) return false;
-
-    for (var i = 0; i < 4; i++) {
-      for (var j = 1; j < 4; j++) {
-        const node = this.coreArr[i][j];
-        gameCtrl.moveOneRight(i, j, node);
-      }
-    }
-
-    setTimeout(() => this.updatePanel, 101);
-    return true;
-  }
-
-
-  // update 每一帧渲染前更新物体的行为，状态和方位
-  update() {
-
-  }
-  // lateUpdate在动画更新之后
-  lateUpdate() {
-
-  }
-  //当组件的 enabled 属性从 false 变为 true 时，或者所在节点的 active 属性从 false 变为 true 时，会激活 onEnable 回调。
-  onEnable() {
-
-  }
-  // 当组件的 enabled 属性从 true 变为 false 时，或者所在节点的 active 属性从 true 变为 false 时，会激活 onDisable 回调。
-  onDisable() {
-
-  }
-  // 当组件或者所在节点调用了 destroy()，则会调用 onDestroy 回调，并在当帧结束时统一回收组件。
-  onDestroy() {
-
+  // 更新分数
+  updateScore(score) {
+    this.scoreLabel.string = `score: ${score}`;
   }
 }
