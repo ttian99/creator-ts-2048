@@ -1,6 +1,7 @@
 import lodash from '../utils/tools/Lodash';
 import gameCtrl from './gameCtrl';
 import animationCtrl from './animationCtrl';
+import loc from '../utils/tools/loc';
 
 const { ccclass, property } = cc._decorator;
 
@@ -9,10 +10,12 @@ export default class Game extends cc.Component {
   @property(cc.Node) panel = null;
   @property(cc.Prefab) CorePrefab = null;
   @property(cc.Label) scoreLabel = null;
+  @property(cc.Label) bestScoreLabel = null;
+  @property(cc.Label) addScoreLabel = null;
   coreBake: cc.Node = null;
   coreArr: Array<Array<cc.Node>> = [];
   actArr: Array<Array<cc.Node>> = [];
-
+  startY: number = 0;
   // onLoad 回调会在组件首次激活时触发，比如所在的场景被载入，或者所在节点被激活的情况下
   onLoad() {
     this.panel = cc.find('panel', this.node);
@@ -20,11 +23,14 @@ export default class Game extends cc.Component {
   }
   // start 回调函数会在组件第一次激活前，也就是第一次执行 update 之前触发
   start() {
+    this.startY = this.addScoreLabel.node.y;
     this.coreBake = cc.instantiate(this.CorePrefab);
     this.newGame();
   }
 
   async newGame() {
+    this.updateBestScore(gameCtrl.getBestScore());
+    this.updateScore(0);
     await this.init();
     await this.updatePanel();
     // 随机2个数字
@@ -33,6 +39,7 @@ export default class Game extends cc.Component {
   }
 
   init() {
+    this.panel.destroyAllChildren();
     const arr = gameCtrl.initData(this);
     for (let i = 0; i < 4; i++) {
       this.coreArr[i] = [];
@@ -101,6 +108,11 @@ export default class Game extends cc.Component {
   }
 
   gameOver() {
+    const bestScore = gameCtrl.getBestScore();
+    if (gameCtrl.score >= bestScore) {
+      gameCtrl.setBestScore(gameCtrl.score);
+      this.updateBestScore(gameCtrl.score);
+    }
     alert('游戏结束');
   }
 
@@ -296,12 +308,30 @@ export default class Game extends cc.Component {
             }
           }
         }
+        // 动画结束判断
+        if (i == 3 && j == 3) {
+          cc.info('数据地方');
+          if (allArr.length === 0) return false;
+          await Promise.all(allArr)
+            .then((results) => {
+              cc.info('result');
+              cc.info(results);
+              return true;
+            })
+        }
       }
     }
   }
 
   // 更新分数
   updateScore(score) {
-    this.scoreLabel.string = `score: ${score}`;
+    this.scoreLabel.string = `${score}`;
+  }
+  updateBestScore(score) {
+    this.bestScoreLabel.string = `${score}`;
+  }
+  addScore(score) {
+    this.addScoreLabel.string = `+${score}`;
+    animationCtrl.addScore(this.addScoreLabel.node, this.startY);
   }
 }

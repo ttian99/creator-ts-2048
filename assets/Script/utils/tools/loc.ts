@@ -6,8 +6,8 @@ class Loc {
     cc.sys.localStorage.setItem(key, value);
   }
 
-  get(key: string) {
-    const storageValue = cc.sys.localStorage.getItem(key);
+  get(key: string):any {
+    return cc.sys.localStorage.getItem(key);
   }
 
   setJson(key: string, json: JSON) {
@@ -59,6 +59,6 @@ class Loc {
     return '';
   };
 }
-
 const loc = new Loc();
+window.loc = loc;
 export default loc;

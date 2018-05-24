@@ -26,7 +26,7 @@ function showMoveAnimation(node, fromx, fromy, tox, toy, cb) {
     // node.active = true;
     node.stopAllActions();
     var act = cc.sequence(
-        cc.moveTo(0.1, cc.p(endPos.x, endPos.y)),
+        cc.moveTo(0.05, cc.p(endPos.x, endPos.y)),
         cc.callFunc(function () {
             cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
             node.setPosition(startPos);
@@ -47,7 +47,7 @@ function showMoveAnimation2(node, fromx, fromy, tox, toy, cb) {
         node.active = true;
         node.stopAllActions();
         var act = cc.sequence(
-            cc.moveTo(0.2, cc.p(endPos.x, endPos.y)),
+            cc.moveTo(0.1, cc.p(endPos.x, endPos.y)),
             cc.callFunc(function () {
                 cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
                 node.setPosition(startPos);
@@ -64,4 +64,25 @@ function showMoveAnimation2(node, fromx, fromy, tox, toy, cb) {
 function updateScore(score) {
     // 
 }
-export default { showNumberWithAnimation, showMoveAnimation, showMoveAnimation2 }
+
+// 加分动画
+function addScore(node, startY) {
+    node.stopAllActions();
+    const startPos = node.getPosition();
+    const act = cc.sequence(
+        cc.callFunc(() => {
+            node.y = startY;
+            node.active = true;
+            node.opacity = 255;
+        }),
+        cc.spawn(
+            // cc.moveBy(0.5, cc.p(0, 80)),
+            cc.moveTo(1, cc.p(startPos.x, startPos.y + 50)),
+            cc.fadeOut(1)
+        ),
+        
+        cc.callFunc(() => node.setPosition(startPos))
+    );
+    node.runAction(act);
+}
+export default { showNumberWithAnimation, showMoveAnimation, showMoveAnimation2, addScore }

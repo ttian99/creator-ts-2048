@@ -1,12 +1,15 @@
 import lodash from '../utils/tools/Lodash';
 import support from './support'
 import cfg from './cfg';
+import loc from '../utils/tools/loc';
 
 class GameCtrl {
     board: Array<Array<number>> = null; // 方块数据
     conflictedArr: Array<Array<boolean>> = null; // 是否合并过
     layer = null;
     score: number = 0; // 得分
+    bestScore: number = 0; //最高分
+    isMoving: boolean = false; // 正在移动，不能下一步操作
     constructor() {
         this.board = new Array();
     }
@@ -26,6 +29,7 @@ class GameCtrl {
             [false, false, false, false],
             [false, false, false, false]
         ];
+        this.isMoving = false;
         return this.board;
     }
     // 获取面板数据
@@ -104,26 +108,33 @@ class GameCtrl {
     // 滑动后的动作
     async goto(director) {
         cc.info(`director = ` + cfg.DIRECTOR[director]);
+        if (this.isMoving) return cc.warn('正在移动，不能进行下一步操作');
         if (director === cfg.DIRECTOR.LEFT) {
             if (this.canMoveLeft) {
+                this.isMoving = true;
                 await this.layer.moveLeft();
                 this.nextRound();
             }
         } else if (director === cfg.DIRECTOR.RIGHT) {
             if (this.canMoveRight) {
+                this.isMoving = true;
                 await this.layer.moveRight();
                 this.nextRound();
             }
         } else if (director === cfg.DIRECTOR.UP) {
             if (this.canMoveUp) {
+                this.isMoving = true;
                 await this.layer.moveUp();
                 this.nextRound();
             }
         } else if (director === cfg.DIRECTOR.DOWN) {
             if (this.canMoveDown) {
+                this.isMoving = true;
                 await this.layer.moveDown();
                 this.nextRound();
             }
+        } else {
+            this.isMoving = false;
         }
     }
 
@@ -142,9 +153,10 @@ class GameCtrl {
         cc.info('==> nextRound');
         this.resetConflict();
         setTimeout(async () => {
+            this.isMoving = false;
             await this.layer.generateOneNumber();
             this.isGameOver && this.layer.gameOver();
-        }, 200)
+        }, 150)
     }
 
     getPosX(i, j) {
@@ -156,7 +168,17 @@ class GameCtrl {
 
     addScore(score) {
         this.score += score;
+        this.layer.addScore(score);
         this.layer.updateScore(this.score);
+    }
+
+    getBestScore(): number {
+        const bestScore = loc.get('bestScore');
+        return bestScore ? bestScore : 0;
+    }
+
+    setBestScore(score) {
+        loc.set('bestScore', score);
     }
 }
 
