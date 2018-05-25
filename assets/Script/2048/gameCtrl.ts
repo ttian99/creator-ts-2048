@@ -10,6 +10,7 @@ class GameCtrl {
     score: number = 0; // 得分
     bestScore: number = 0; //最高分
     isMoving: boolean = false; // 正在移动，不能下一步操作
+    delScore: number = 0; // 单次操作增加的分数
     constructor() {
         this.board = new Array();
     }
@@ -108,6 +109,7 @@ class GameCtrl {
     // 滑动后的动作
     async goto(director) {
         cc.info(`director = ` + cfg.DIRECTOR[director]);
+        this.delScore = 0;
         if (this.isMoving) return cc.warn('正在移动，不能进行下一步操作');
         if (director === cfg.DIRECTOR.LEFT) {
             if (this.canMoveLeft) {
@@ -170,6 +172,13 @@ class GameCtrl {
         this.score += score;
         this.layer.addScore(score);
         this.layer.updateScore(this.score);
+    }
+    addScoreNew() {
+        // this.score += score;
+        this.score += this.delScore;
+        this.layer.addScore(this.delScore);
+        this.layer.updateScore(this.score);
+        this.delScore = 0;
     }
 
     getBestScore(): number {

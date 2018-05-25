@@ -10,6 +10,7 @@ const { ccclass, property } = cc._decorator;
 export default class Game extends cc.Component {
   @property(cc.Node) panel = null;
   @property(cc.Prefab) CorePrefab = null;
+  @property(cc.Prefab) GameOverLayer = null;
   @property(cc.Label) scoreLabel = null;
   @property(cc.Label) bestScoreLabel = null;
   @property(cc.Label) addScoreLabel = null;
@@ -117,6 +118,7 @@ export default class Game extends cc.Component {
       this.updateBestScore(gameCtrl.score);
     }
     alert('游戏结束');
+    // this.gameOver.active = true;
   }
 
   async moveLeft() {
