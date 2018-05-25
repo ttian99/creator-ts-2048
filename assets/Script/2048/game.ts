@@ -2,6 +2,7 @@ import lodash from '../utils/tools/Lodash';
 import gameCtrl from './gameCtrl';
 import animationCtrl from './animationCtrl';
 import loc from '../utils/tools/loc';
+import cfg from './cfg';
 
 const { ccclass, property } = cc._decorator;
 
@@ -12,6 +13,7 @@ export default class Game extends cc.Component {
   @property(cc.Label) scoreLabel = null;
   @property(cc.Label) bestScoreLabel = null;
   @property(cc.Label) addScoreLabel = null;
+  @property(cc.Label) versionLabel = null;
   coreBake: cc.Node = null;
   coreArr: Array<Array<cc.Node>> = [];
   actArr: Array<Array<cc.Node>> = [];
@@ -19,6 +21,7 @@ export default class Game extends cc.Component {
   // onLoad 回调会在组件首次激活时触发，比如所在的场景被载入，或者所在节点被激活的情况下
   onLoad() {
     this.panel = cc.find('panel', this.node);
+    this.versionLabel.string = cfg.version;
     window.game = this;
   }
   // start 回调函数会在组件第一次激活前，也就是第一次执行 update 之前触发

@@ -67,12 +67,12 @@ function updateScore(score) {
 
 // 加分动画
 function addScore(node, startY) {
+    node.active = true;
     node.stopAllActions();
     const startPos = node.getPosition();
     const act = cc.sequence(
         cc.callFunc(() => {
             node.y = startY;
-            node.active = true;
             node.opacity = 255;
         }),
         cc.spawn(
