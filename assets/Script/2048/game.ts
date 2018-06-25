@@ -122,11 +122,11 @@ export default class Game extends cc.Component {
   }
 
   async moveLeft() {
+    const board = gameCtrl.getBoard();
+    const conflictedArr = gameCtrl.conflictedArr;
     for (var i = 0; i < 4; i++) {
       for (var j = 1; j < 4; j++) {
         const actNode = this.actArr[i][j];
-        const board = gameCtrl.getBoard();
-        const conflictedArr = gameCtrl.conflictedArr;
         let allArr = [];
 
         if (board[i][j] !== 0) {
@@ -139,8 +139,7 @@ export default class Game extends cc.Component {
               board[i][j] = 0;
               // move (i,j)->(i,k)
               this.updateCore(i, j);
-              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
-              allArr.push(act);
+              animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
               break;
             } else if (board[i][k] !== 0 && board[i][k] == board[i][j] && noblock && !conflictedArr[i][k]) {
               this.updateActCore(i, j);
@@ -151,15 +150,13 @@ export default class Game extends cc.Component {
               conflictedArr[i][k] = true;
               // move
               this.updateCore(i, j);
-              let act = animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
-              allArr.push(act);
+              animationCtrl.showMoveAnimation2(actNode, i, j, i, k, (tox, toy) => this.updateCore(tox, toy));
               // add Score
               gameCtrl.addScore(board[i][k] / 2);
               break;
             }
           }
         }
-
         // 动画结束判断
         if (i == 3 && j == 3) {
           cc.info('数据地方');
@@ -222,10 +219,10 @@ export default class Game extends cc.Component {
               cc.info('result');
               // cc.info(results);
               this.updatePanel();
-
               cc.info('result over');
               return true;
-            })
+            }
+          )
         }
       }
     }
