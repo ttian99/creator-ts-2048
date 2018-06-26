@@ -189,6 +189,10 @@ class GameCtrl {
     setBestScore(score) {
         loc.set('bestScore', score);
     }
+
+    newGame() {
+      this.layer.newGame();
+    }
 }
 
 const gameCtrl = new GameCtrl();

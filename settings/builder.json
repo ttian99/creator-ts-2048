@@ -29,10 +29,10 @@
   },
   "renderMode": "0",
   "startScene": "9406ae42-17d5-4afc-b112-8a146e34b645",
-  "title": "hello_world",
+  "title": "get2048",
   "webOrientation": "auto",
   "wechatgame": {
-    "appid": "wx6ac3f5090a6b99c5",
+    "appid": "wx5611f7124238edea",
     "orientation": "portrait"
   },
   "xxteaKey": "7e9412df-c96a-42",

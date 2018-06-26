@@ -117,8 +117,10 @@ export default class Game extends cc.Component {
       gameCtrl.setBestScore(gameCtrl.score);
       this.updateBestScore(gameCtrl.score);
     }
-    alert('游戏结束');
+    // alert('游戏结束');
     // this.gameOver.active = true;
+    const gameOver = cc.instantiate(this.GameOverLayer);
+    this.node.addChild(gameOver, 10);
   }
 
   async moveLeft() {
