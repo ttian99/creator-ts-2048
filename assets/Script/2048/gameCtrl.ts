@@ -19,11 +19,13 @@ class GameCtrl {
         this.score = 0; // 得分
         this.layer = gameLayer;
         this.board = [
-            [0, 0, 0, 8],
-            [2, 0, 2, 0],
-            [0, 0, 0, 2],
-            [2, 0, 0, 2]
+            [0, 0, 0, 0],
+            [0, 0, 4, 0],
+            [0, 2, 0, 0],
+            [0, 0, 0, 0]
         ];
+        // this.randOneNumber();
+        // this.randOneNumber();
         this.conflictedArr = [
             [false, false, false, false],
             [false, false, false, false],
