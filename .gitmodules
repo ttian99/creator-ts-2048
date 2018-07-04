@@ -1,0 +1,3 @@
+[submodule "assets/Script/utils"]
+	path = assets/Script/utils
+	url = https://github.com/ttian99/cocos-creator-ts-utils.git
