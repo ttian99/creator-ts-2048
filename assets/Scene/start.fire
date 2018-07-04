@@ -897,6 +897,9 @@
       "__id__": 2
     },
     "_enabled": true,
+    "SHARE_IMG": {
+      "__uuid__": "8ac7a4fd-2ed5-447e-bcde-b2fdf3a637c6"
+    },
     "versionLabel": {
       "__id__": 8
     }
