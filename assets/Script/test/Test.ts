@@ -1,4 +1,4 @@
-import lodash from '../utils/tools/Lodash';
+import { lodash } from "../utils";
 
 const { ccclass, property } = cc._decorator;
 
@@ -19,7 +19,6 @@ export default class Xixi extends cc.Component {
     const aa = lodash.map([1, 2, 3, 4], (value) => {
       return value === 3;
     });
-    console.log(aa);
   }
   // update 每一帧渲染前更新物体的行为，状态和方位
   update() {

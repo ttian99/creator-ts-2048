@@ -1,4 +1,3 @@
-import lodash from '../utils/tools/Lodash';
 import cfg from '../2048/cfg';
 
 const { ccclass, property } = cc._decorator;

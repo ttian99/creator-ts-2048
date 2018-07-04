@@ -10,7 +10,7 @@ const {ccclass, property} = cc._decorator;
 export default class TouchCtrl extends cc.Component {
     @property(cc.Vec2) startPos = null; // 点击初始位置
     @property(Number) defaultLen = 50; // 长度
-    
+
     start () {
 
     }
@@ -26,7 +26,7 @@ export default class TouchCtrl extends cc.Component {
         this.node.on(cc.Node.EventType.TOUCH_END, this.touchEnd, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.touchMove, this);
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.touchCancel, this);
-        
+
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     }
     // 关闭事件监听
@@ -39,14 +39,11 @@ export default class TouchCtrl extends cc.Component {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     }
     touchStart(event) {
-        // cc.error('touchStart');
         this.startPos = event.getLocation();
     }
     touchMove(event) {
-        // cc.error('touchMove');
     }
     touchEnd(event) {
-        // cc.error('touchEnd');
         const endPos = event.getLocation();
         const deltaX = endPos.x - this.startPos.x;
         const deltaY = endPos.y - this.startPos.y;
@@ -54,7 +51,6 @@ export default class TouchCtrl extends cc.Component {
         this.startPos = null;
     }
     touchCancel(event) {
-        // cc.error('touchCancel');
     }
     // 键盘按键
     onKeyUp(event) {

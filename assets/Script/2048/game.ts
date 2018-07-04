@@ -1,7 +1,5 @@
-import lodash from '../utils/tools/Lodash';
 import gameCtrl from './gameCtrl';
 import animationCtrl from './animationCtrl';
-import loc from '../utils/tools/loc';
 import cfg from './cfg';
 
 const { ccclass, property } = cc._decorator;
@@ -75,7 +73,6 @@ export default class Game extends cc.Component {
 
   // 更新面板
   async updatePanel() {
-    cc.error('== updatePanel = ' + JSON.stringify(gameCtrl.board, null, 0));
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
         const core = this.coreArr[i][j];
@@ -91,7 +88,6 @@ export default class Game extends cc.Component {
   updateCore(i, j) {
     const core = this.coreArr[i][j];
     const number = gameCtrl.getNumber(i, j);
-    cc.info(`updateCore number = ${number}`);
     core.getComponent('core').setNumber(number);
   }
   updateActCore(i, j) {
@@ -133,7 +129,6 @@ export default class Game extends cc.Component {
 
         if (board[i][j] !== 0) {
           for (var k = 0; k < j; k++) {
-            cc.error(`k=${k}, j-1=${j - 1}`);
             const noblock = gameCtrl.noBlockHorizontal(i, k, j, board);
             if (board[i][k] == 0 && noblock) {
               this.updateActCore(i, j);
@@ -161,12 +156,9 @@ export default class Game extends cc.Component {
         }
         // 动画结束判断
         if (i == 3 && j == 3) {
-          cc.info('数据地方');
           if (allArr.length === 0) return false;
           await Promise.all(allArr)
             .then((results) => {
-              cc.info('result');
-              cc.info(results);
               return true;
             })
         }
@@ -175,7 +167,6 @@ export default class Game extends cc.Component {
   }
 
   async moveRight() {
-    cc.warn('==> prepare moveRight');
     for (var i = 0; i < 4; i++) {
       for (var j = 2; j >= 0; j--) {
         const actNode = this.actArr[i][j];
@@ -214,14 +205,10 @@ export default class Game extends cc.Component {
 
         // 动画结束判断
         if (i == 3 && j == 3) {
-          cc.info('数据地方');
           if (allArr.length === 0) return false;
           await Promise.all(allArr)
             .then((results) => {
-              cc.info('result');
-              // cc.info(results);
               this.updatePanel();
-              cc.info('result over');
               return true;
             }
           )
@@ -231,7 +218,6 @@ export default class Game extends cc.Component {
   }
 
   async moveUp() {
-    cc.warn('==> prepare moveUp');
     for (var j = 0; j < 4; j++) {
       for (var i = 1; i < 4; i++) {
         const actNode = this.actArr[i][j];
@@ -266,12 +252,9 @@ export default class Game extends cc.Component {
         }
         // 动画结束判断
         if (i == 3 && j == 3) {
-          cc.info('数据地方');
           if (allArr.length === 0) return false;
           await Promise.all(allArr)
             .then((results) => {
-              cc.info('result');
-              cc.info(results);
               return true;
             })
         }
@@ -279,7 +262,6 @@ export default class Game extends cc.Component {
     }
   }
   async moveDown() {
-    cc.warn('==> prepare moveDown');
     for (var j = 0; j < 4; j++) {
       for (var i = 2; i >= 0; i--) {
         const actNode = this.actArr[i][j];
@@ -314,12 +296,9 @@ export default class Game extends cc.Component {
         }
         // 动画结束判断
         if (i == 3 && j == 3) {
-          cc.info('数据地方');
           if (allArr.length === 0) return false;
           await Promise.all(allArr)
             .then((results) => {
-              cc.info('result');
-              cc.info(results);
               return true;
             })
         }

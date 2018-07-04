@@ -1,5 +1,4 @@
 import support from './support';
-import gameCtrl from './gameCtrl';
 
 // 生成数字动画
 function showNumberWithAnimation(node, i, j, randNumber) {
@@ -19,16 +18,16 @@ function showNumberWithAnimation(node, i, j, randNumber) {
 
 // 移动动画
 function showMoveAnimation(node, fromx, fromy, tox, toy, cb) {
-    cc.info(`==> act start: (${fromx}, ${fromy}) => (${tox}, ${toy})`);
+    // cc.info(`==> act start: (${fromx}, ${fromy}) => (${tox}, ${toy})`);
     const startPos = support.getPos(fromx, fromy);
     const endPos = support.getPos(tox, toy)
-    cc.info(`==> act mid: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
+    // cc.info(`==> act mid: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
     // node.active = true;
     node.stopAllActions();
     var act = cc.sequence(
         cc.moveTo(0.05, cc.p(endPos.x, endPos.y)),
         cc.callFunc(function () {
-            cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
+            // cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
             node.setPosition(startPos);
             node.active = false;
             cb && cb(tox, toy);
@@ -40,16 +39,16 @@ function showMoveAnimation(node, fromx, fromy, tox, toy, cb) {
 // 移动动画
 function showMoveAnimation2(node, fromx, fromy, tox, toy, cb) {
     return new Promise((resolve, reject) => {
-        cc.info(`==> act start: (${fromx}, ${fromy}) => (${tox}, ${toy})`);
+        // cc.info(`==> act start: (${fromx}, ${fromy}) => (${tox}, ${toy})`);
         const startPos = support.getPos(fromx, fromy);
         const endPos = support.getPos(tox, toy)
-        cc.info(`==> act mid: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
+        // cc.info(`==> act mid: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
         node.active = true;
         node.stopAllActions();
         var act = cc.sequence(
             cc.moveTo(0.1, cc.p(endPos.x, endPos.y)),
             cc.callFunc(function () {
-                cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
+                // cc.info(`==> act end: (${fromx}, ${fromy}) => (${tox}, ${toy}) || (${startPos.x}, ${startPos.y}) => (${endPos.x}, ${endPos.y})`);
                 node.setPosition(startPos);
                 node.active = false;
                 cb && cb(tox, toy);
@@ -62,7 +61,7 @@ function showMoveAnimation2(node, fromx, fromy, tox, toy, cb) {
 
 // 更新分数
 function updateScore(score) {
-    // 
+    //
 }
 
 // 加分动画
@@ -80,7 +79,7 @@ function addScore(node, startY) {
             cc.moveTo(1, cc.p(startPos.x, startPos.y + 50)),
             cc.fadeOut(1)
         ),
-        
+
         cc.callFunc(() => node.setPosition(startPos))
     );
     node.runAction(act);

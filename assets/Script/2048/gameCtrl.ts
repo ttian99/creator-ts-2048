@@ -1,7 +1,6 @@
-import lodash from '../utils/tools/Lodash';
 import support from './support'
 import cfg from './cfg';
-import loc from '../utils/tools/loc';
+import { loc } from '../utils';
 
 class GameCtrl {
     board: Array<Array<number>> = null; // 方块数据
@@ -110,7 +109,6 @@ class GameCtrl {
 
     // 滑动后的动作
     async goto(director) {
-        cc.info(`director = ` + cfg.DIRECTOR[director]);
         this.delScore = 0;
         if (this.isMoving) return cc.warn('正在移动，不能进行下一步操作');
         if (director === cfg.DIRECTOR.LEFT) {
@@ -154,7 +152,6 @@ class GameCtrl {
 
     // 进入下一轮
     async nextRound() {
-        cc.info('==> nextRound');
         this.resetConflict();
         setTimeout(async () => {
             this.isMoving = false;
