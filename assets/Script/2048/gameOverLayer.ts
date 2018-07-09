@@ -17,6 +17,6 @@ export default class GameOverLayer extends cc.Component {
     gameCtrl.newGame();
   }
   clickShareBtn() {
-    wxTools.shareAppMessage('我在Get2048中获得了', cfg.SHARE_IMG);
+    wxTools.shareAppMessage(`我在Get2048中获得了${gameCtrl.score}`, SHARE.IMG);
   }
 }

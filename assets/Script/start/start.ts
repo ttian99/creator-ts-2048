@@ -5,7 +5,6 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Xixi extends cc.Component {
-  @property(cc.SpriteFrame) SHARE_IMG = null;
   @property(cc.Label) versionLabel = null;
   start() {
     this.versionLabel.string = cfg.version;
@@ -15,9 +14,6 @@ export default class Xixi extends cc.Component {
   init() {
     wxTools.createGameClubButton();
     wxTools.showShareMenu();
-    const url = spriteTools.getTextureUrlAtWechat(this.SHARE_IMG);
-    cfg.SHARE_IMG = url;
-    wxTools.onShareAppMessage('快来玩和我一起玩Get2048!', url);
   }
 
   gotoGame() {
