@@ -5,6 +5,9 @@ require('libs/wx-downloader.js');
 wxDownloader.REMOTE_SERVER_ROOT = "undefined";
 wxDownloader.SUBCONTEXT_ROOT = "";
 require('src/settings');
+
+// 配置分享图片
+require('share/share.js');
+
 require('main');
 
-require('share/share.js');

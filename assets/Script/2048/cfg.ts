@@ -1,5 +1,5 @@
 const cfg = {
-    version: '1.0.0.b4',
+    version: '1.0.1',
     // 方向
     DIRECTOR: cc.Enum({
         UP: 0,
