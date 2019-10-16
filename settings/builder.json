@@ -1,4 +1,19 @@
 {
+  "android-instant": {
+    "REMOTE_SERVER_ROOT": "",
+    "host": "",
+    "pathPattern": "",
+    "recordPath": "",
+    "scheme": "https",
+    "skipRecord": false
+  },
+  "appBundle": false,
+  "baidugame": {
+    "REMOTE_SERVER_ROOT": "",
+    "appid": "testappid",
+    "orientation": "portrait",
+    "subContext": ""
+  },
   "encryptJs": true,
   "excludeScenes": [
     "2d2f792f-a40c-49bb-a189-ed176a246e49"
@@ -7,7 +22,7 @@
   "includeSDKBox": false,
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
-  "md5Cache": true,
+  "md5Cache": false,
   "mergeStartScene": true,
   "optimizeHotUpdate": false,
   "orientation": {
@@ -29,20 +44,5 @@
     "orientation": "portrait"
   },
   "xxteaKey": "7e9412df-c96a-42",
-  "zipCompressJs": true,
-  "baidugame": {
-    "appid": "testappid",
-    "orientation": "portrait",
-    "REMOTE_SERVER_ROOT": "",
-    "subContext": ""
-  },
-  "android-instant": {
-    "REMOTE_SERVER_ROOT": "",
-    "pathPattern": "",
-    "scheme": "https",
-    "host": "",
-    "skipRecord": false,
-    "recordPath": ""
-  },
-  "appBundle": false
+  "zipCompressJs": true
 }

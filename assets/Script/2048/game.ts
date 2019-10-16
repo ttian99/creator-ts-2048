@@ -103,7 +103,7 @@ export default class Game extends cc.Component {
     const { randx, randy, randNumber } = gameCtrl.randOneNumber;
     const node = this.coreArr[randx][randy];
     await animationCtrl.showNumberWithAnimation(node, randx, randy, randNumber);
-    cc.log(`generateOneNumber randNumber = ${randNumber}, (${randx}, ${randy})`);
+    // cc.log(`generateOneNumber randNumber = ${randNumber}, (${randx}, ${randy})`);
     return true;
   }
 

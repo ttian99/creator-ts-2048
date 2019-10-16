@@ -45,6 +45,7 @@ export default class TouchCtrl extends cc.Component {
     }
     touchEnd(event) {
         const endPos = event.getLocation();
+        const startPos = this.startPos || {x: 0, y: 0};
         const deltaX = endPos.x - this.startPos.x;
         const deltaY = endPos.y - this.startPos.y;
         this.checkDirector(event, deltaX, deltaY);
