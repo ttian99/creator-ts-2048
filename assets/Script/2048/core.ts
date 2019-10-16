@@ -16,9 +16,9 @@ export default class Core extends cc.Component {
 
     updateUI() {
         this.updateVisible();
-        this.updateBgColor();   
-        this.updateNumberColor();   
-        this.updateNumber();   
+        this.updateBgColor();
+        this.updateNumberColor();
+        this.updateNumber();
     }
 
     updateVisible() {
@@ -28,13 +28,13 @@ export default class Core extends cc.Component {
     updateBgColor() {
         const color = support.getNumberBackgroundColor(this._number);
         // cc.log(this._number + ' , updateBgColor = ' + color);
-        this.node.color = cc.hexToColor(color);
+        this.node.color = new cc.Color().fromHEX(color)
     }
 
     updateNumberColor() {
         const color = support.getNumberColor(this._number);
         // cc.log(this._number + ' , updateNumberColor = ' + color);
-        this.label.color = cc.hexToColor(color);
+        this.label.color = new cc.Color().fromHEX(color);
     }
 
     updateNumber() {

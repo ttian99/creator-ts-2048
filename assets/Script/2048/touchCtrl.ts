@@ -55,17 +55,17 @@ export default class TouchCtrl extends cc.Component {
     // 键盘按键
     onKeyUp(event) {
         switch (event.keyCode) {
-            case cc.KEY.w:
-            case cc.KEY.up: this.goto(cfg.DIRECTOR.UP);
+            case cc.macro.KEY.w:
+            case cc.macro.KEY.up: this.goto(cfg.DIRECTOR.UP);
                 break;
-            case cc.KEY.s:
-            case cc.KEY.down: this.goto(cfg.DIRECTOR.DOWN);
+            case cc.macro.KEY.s:
+            case cc.macro.KEY.down: this.goto(cfg.DIRECTOR.DOWN);
                 break;
-            case cc.KEY.a:
-            case cc.KEY.left: this.goto(cfg.DIRECTOR.LEFT);
+            case cc.macro.KEY.a:
+            case cc.macro.KEY.left: this.goto(cfg.DIRECTOR.LEFT);
                 break;
-            case cc.KEY.d:
-            case cc.KEY.right: this.goto(cfg.DIRECTOR.RIGHT);
+            case cc.macro.KEY.d:
+            case cc.macro.KEY.right: this.goto(cfg.DIRECTOR.RIGHT);
                 break;
             default:
                 break;
